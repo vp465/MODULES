@@ -1,1 +1,14 @@
+seq1 = "ACTGATCAC"
+seq2 = "TTAGCTCAC"
 
+
+def count_matches():
+    if len(seq1) != len(seq2):
+        raise ValueError("Sequences must be of the same length")
+
+    score = 0
+    for i in range(len(seq1)):
+        if seq1[i] == seq2[i]:
+            score += 1
+
+    print(score)
