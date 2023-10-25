@@ -1,23 +1,25 @@
-seq1 = "ACTGATCAC"
-seq2 = "TTAGCTCAC"
-def count_matches():
+def calculate_number_of_matches(seq1, seq2):
     if len(seq1) != len(seq2):
-        raise ValueError("Sequences must be of the same length")
-            score = 0
-    for i in range(len(seq1)):
-        if seq1[i] == seq2[i]:
-            score += 1
-    print(score)
-def max_contiguous_chain():
+        raise ValueError("Sequences must be of the same length for match calculation.")
+
+    match_count = 0
+    for nucleotide1, nucleotide2 in zip(seq1, seq2):
+        if nucleotide1 == nucleotide2:
+            match_count += 1
+    return match_count
+
+
+def calculate_maximum_contiguous_chain(seq1, seq2):
     max_chain = 0
     current_chain = 0
-for i in range(len(seq1)):
-        if seq1[i] == seq2[i]:
+    for nucleotide1, nucleotide2 in zip(seq1, seq2):
+        if nucleotide1 == nucleotide2:
             current_chain += 1
-            max_chain = max(max_chain, current_chain)
+            if current_chain > max_chain:
+                max_chain = current_chain
         else:
             current_chain = 0
-print(max_chain)
-count_matches()
-max_contiguous_chain()
+    return max_chain
+
+
 
