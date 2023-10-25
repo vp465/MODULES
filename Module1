@@ -19,7 +19,105 @@ def calculate_maximum_contiguous_chain(seq1, seq2):
                 max_chain = current_chain
         else:
             current_chain = 0
-    return max_chain
+    return max_chain  
+def main_menu():
+    maximum_shift = int(input("Enter the maximum shift value: "))
+
+    while True:
+        print("Main Menu:")
+        print(
+            "1. Calculate matches, best possible matches with maximum shift, and maximum contiguous chain from console input"
+        )
+        print(
+            "2. Calculate matches, best possible matches with maximum shift, and maximum contiguous chain from file input"
+        )
+        print("3. Exit")
+
+        choice = input("Enter your choice: ")
+
+        if choice == "1":
+            sequence1 = input("Enter the first DNA sequence: ")
+            sequence2 = input("Enter the second DNA sequence: ")
+
+            if len(sequence1) != len(sequence2):
+                print("Sequences must be of the same length for match calculation.")
+            else:
+                # Calculate matches without shifts
+                matches = calculate_number_of_matches(sequence1, sequence2)
+                print(f"Number of matches without shifts: {matches}")
+
+                # Calculate best possible matches with maximum shift
+                best_match = 0
+                best_shift = 0
+                for shift in range(1, maximum_shift + 1):
+                    sequence1_shifted = sequence1[-shift:] + sequence1[:-shift]
+                    shifted_matches = calculate_number_of_matches(
+                        sequence1_shifted, sequence2
+                    )
+                    if shifted_matches > best_match:
+                        best_match = shifted_matches
+                        best_shift = shift
+                print(
+                    f"Best possible matches with maximum shift ({best_shift} shifts): {best_match}"
+                )
+
+                # Calculate maximum contiguous chain
+                max_chain = calculate_maximum_contiguous_chain(sequence1, sequence2)
+                print(f"Maximum contiguous chain: {max_chain}")
+
+        elif choice == "2":
+            filename = input("Enter the filename: ")
+            try:
+                with open(filename, "r") as file:
+                    sequences = file.readlines()
+                    sequence1 = sequences[0].strip()
+                    sequence2 = sequences[1].strip()
+
+                    if len(sequence1) != len(sequence2):
+                        print(
+                            "Sequences in the file must be of the same length for match calculation."
+                        )
+                    else:
+                        # Calculate matches without shifts
+                        matches = calculate_number_of_matches(sequence1, sequence2)
+                        print(f"Number of matches without shifts: {matches}")
+
+                        # Calculate best possible matches with maximum shift
+                        best_match = 0
+                        best_shift = 0
+                        for shift in range(1, maximum_shift + 1):
+                            sequence1_shifted = sequence1[-shift:] + sequence1[:-shift]
+                            shifted_matches = calculate_number_of_matches(
+                                sequence1_shifted, sequence2
+                            )
+                            if shifted_matches > best_match:
+                                best_match = shifted_matches
+                                best_shift = shift
+                        print(
+                            f"Best possible matches with maximum shift ({best_shift} shifts): {best_match}"
+                        )
+
+                        # Calculate maximum contiguous chain
+                        max_chain = calculate_maximum_contiguous_chain(
+                            sequence1, sequence2
+                        )
+                        print(f"Maximum contiguous chain without shifts: {max_chain}")
+
+            except FileNotFoundError:
+                print(f"File '{filename}' not found.")
+            except IndexError:
+                print(
+                    "The file should contain two DNA sequences separated by newlines."
+                )
+        elif choice == "3":
+            print("Exiting program.")
+            break
+        else:
+            print("Invalid choice. Please select a valid option.")
+
+
+if _name_ == "_main_":
+    main_menu()
 
 
 
