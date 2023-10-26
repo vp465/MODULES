@@ -16,7 +16,7 @@ def read_sequences_from_file(filename):
 # Function to calculate the number of matches between two DNA sequences
 def calculate_matches(sequence1, sequence2):
     match_count = sum(char1 == char2 for char1, char2 in zip(sequence1, sequence2))
-    print(f"Number of Matches without Shifts: {match_count}")
+    return match_count
 
 
 # Function to calculate the maximum contiguous chain between two DNA sequences
@@ -31,7 +31,7 @@ def calculate_max_contiguous_chain(sequence1, sequence2):
         else:
             current_contiguous_chain = 0
 
-    print(f"Maximum Contiguous Chain: {max_contiguous_chain}")
+    return max_contiguous_chain
 
 
 # Function to set the maximum shift based on user input
@@ -47,57 +47,123 @@ def calculate_matches_with_shifts(sequence1, sequence2, max_shift):
 
     for shift in range(1, max_shift + 1):
         shifted_sequence1 = sequence1[-shift:] + sequence1[:-shift]
-        match_count = sum(
-            char1 == char2 for char1, char2 in zip(shifted_sequence1, sequence2)
-        )
+        match_count = calculate_matches(shifted_sequence1, sequence2)
 
         if match_count > max_match_count:
             max_match_count = match_count
             best_shift = shift
 
-    print(f"Number of Matches with Maximum Shift ({best_shift}): {max_match_count}")
+    return max_match_count, best_shift
+
+
+# Function to calculate the maximum contiguous chain with shifts iterating through the maximum shift
+def calculate_max_contiguous_chain_with_shifts(sequence1, sequence2, max_shift):
+    max_contiguous_chain = 0
+    best_shift = 0
+
+    for shift in range(1, max_shift + 1):
+        shifted_sequence1 = sequence1[-shift:] + sequence1[:-shift]
+        chain_length = calculate_max_contiguous_chain(shifted_sequence1, sequence2)
+
+        if chain_length > max_contiguous_chain:
+            max_contiguous_chain = chain_length
+            best_shift = shift
+
+    return max_contiguous_chain, best_shift
 
 
 # Main menu for user interaction
 def main_menu():
     while True:
         print("\nMain Menu:")
-        print("1. Calculate Number of Matches (Console Input)")
-        print("2. Calculate Maximum Contiguous Chain (Console Input)")
-        print("3. Calculate Number of Matches with Maximum Shift (Console Input)")
-        print("4. Calculate Number of Matches (File Input)")
-        print("5. Calculate Maximum Contiguous Chain (File Input)")
-        print("6. Exit")
+        print("1. Calculate Force Selection of Maximum Shift (Console Input)")
+        print("2. Calculate Number of Matches without Shifts (Console Input)")
+        print("3. Calculate Best Score with Maximum Shift (Console Input)")
+        print(
+            "4. Calculate Maximum Contiguous Chain with Maximum Shift (Console Input)"
+        )
+        print("5. Calculate Force Selection of Maximum Shift (File Input)")
+        print("6. Calculate Number of Matches without Shifts (File Input)")
+        print("7. Calculate Best Score with Maximum Shift (File Input)")
+        print("8. Calculate Maximum Contiguous Chain with Maximum Shift (File Input)")
+        print("9. Exit")
         choice = input("Enter your choice: ")
 
         if choice == "1":
-            sequence1 = input("Enter the first DNA sequence: ").upper()
-            sequence2 = input("Enter the second DNA sequence: ").upper()
-            calculate_matches(sequence1, sequence2)
+            max_shift = set_max_shift()
+            print(f"Force Selection of Maximum Shift: {max_shift}")
         elif choice == "2":
             sequence1 = input("Enter the first DNA sequence: ").upper()
             sequence2 = input("Enter the second DNA sequence: ").upper()
-            calculate_max_contiguous_chain(sequence1, sequence2)
+            match_count = calculate_matches(sequence1, sequence2)
+            print(f"Number of Matches without Shifts: {match_count}")
         elif choice == "3":
             sequence1 = input("Enter the first DNA sequence: ").upper()
             sequence2 = input("Enter the second DNA sequence: ").upper()
             max_shift = set_max_shift()
-            calculate_matches_with_shifts(sequence1, sequence2, max_shift)
+            max_match_count, best_shift = calculate_matches_with_shifts(
+                sequence1, sequence2, max_shift
+            )
+            print(f"Best Score with Maximum Shift ({best_shift}): {max_match_count}")
         elif choice == "4":
-            filename = input("Enter the filename: ")
-            sequences = read_sequences_from_file(filename)
-            if len(sequences) >= 2:
-                calculate_matches(sequences[0], sequences[1])
-            else:
-                print("File must contain at least two sequences.")
+            sequence1 = input("Enter the first DNA sequence: ").upper()
+            sequence2 = input("Enter the second DNA sequence: ").upper()
+            max_shift = set_max_shift()
+            (
+                max_contiguous_chain,
+                best_shift,
+            ) = calculate_max_contiguous_chain_with_shifts(
+                sequence1, sequence2, max_shift
+            )
+            print(
+                f"Maximum Contiguous Chain with Maximum Shift ({best_shift}): {max_contiguous_chain}"
+            )
         elif choice == "5":
             filename = input("Enter the filename: ")
             sequences = read_sequences_from_file(filename)
             if len(sequences) >= 2:
-                calculate_max_contiguous_chain(sequences[0], sequences[1])
+                max_shift = set_max_shift()
+                print(f"Force Selection of Maximum Shift: {max_shift}")
             else:
                 print("File must contain at least two sequences.")
         elif choice == "6":
+            filename = input("Enter the filename: ")
+            sequences = read_sequences_from_file(filename)
+            if len(sequences) >= 2:
+                match_count = calculate_matches(sequences[0], sequences[1])
+                print(f"Number of Matches without Shifts: {match_count}")
+            else:
+                print("File must contain at least two sequences.")
+        elif choice == "7":
+            filename = input("Enter the filename: ")
+            sequences = read_sequences_from_file(filename)
+            if len(sequences) >= 2:
+                max_shift = set_max_shift()
+                max_match_count, best_shift = calculate_matches_with_shifts(
+                    sequences[0], sequences[1], max_shift
+                )
+                print(
+                    f"Best Score with Maximum Shift ({best_shift}): {max_match_count}"
+                )
+            else:
+                print("File must contain at least two sequences.")
+        elif choice == "8":
+            filename = input("Enter the filename: ")
+            sequences = read_sequences_from_file(filename)
+            if len(sequences) >= 2:
+                max_shift = set_max_shift()
+                (
+                    max_contiguous_chain,
+                    best_shift,
+                ) = calculate_max_contiguous_chain_with_shifts(
+                    sequences[0], sequences[1], max_shift
+                )
+                print(
+                    f"Maximum Contiguous Chain with Maximum Shift ({best_shift}): {max_contiguous_chain}"
+                )
+            else:
+                print("File must contain at least two sequences.")
+        elif choice == "9":
             print("Exiting program.")
             break
         else:
