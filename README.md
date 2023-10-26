@@ -22,7 +22,7 @@ These instructions will help you run the script on your local machine.
 
 1. Clone this repository to your local machine using:
 
-git clone https://github.com/yourusername/your-repo.git
+git clone https://github.com/vp465/your-repo.git
 
 2. Navigate to the repository folder:
 
