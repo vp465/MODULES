@@ -43,80 +43,64 @@ def set_max_shift():
     max_shift = int(input("Enter the maximum shift: "))
     return max_shift
 
-# Function to calculate the number of matches with shifts iterating through the maximum shift
-def calculate_matches_with_shifts(sequence1, sequence2, max_shift):
+# Function to calculate the number of matches with shifts for a given shift value
+def calculate_matches_for_shift(sequence1, sequence2, shift):
+    shifted_sequence1 = sequence1[-shift:] + sequence1[:-shift]
+    match_count = calculate_matches(shifted_sequence1, sequence2)
+    return match_count
+
+# Function to calculate the best number of matches with shifts by iterating from 1 to max shift
+def calculate_best_matches_with_shifts(sequence1, sequence2, max_shift):
     if len(sequence1) != len(sequence2):
         print("Error: Sequences must be of the same length.")
         return None, 0
 
-    max_match_count = 0
+    best_match_count = 0
     best_shift = 0
 
     for shift in range(1, max_shift + 1):
-        shifted_sequence1 = sequence1[-shift:] + sequence1[:-shift]
-        match_count = calculate_matches(shifted_sequence1, sequence2)
+        match_count = calculate_matches_for_shift(sequence1, sequence2, shift)
 
-        if match_count is not None and match_count > max_match_count:
-            max_match_count = match_count
+        if match_count > best_match_count:
+            best_match_count = match_count
             best_shift = shift
 
-    return max_match_count, best_shift
+    return best_match_count, best_shift
 
-# Function to calculate the maximum contiguous chain with shifts iterating through the maximum shift
-def calculate_max_contiguous_chain_with_shifts(sequence1, sequence2, max_shift):
+# Function to calculate the maximum contiguous chain with shifts for a given shift value
+def calculate_max_contiguous_chain_for_shift(sequence1, sequence2, shift):
+    shifted_sequence1 = sequence1[-shift:] + sequence1[:-shift]
+    chain_length = calculate_max_contiguous_chain(shifted_sequence1, sequence2)
+    return chain_length
+
+# Function to calculate the maximum contiguous chain by iterating from 1 to max shift
+def calculate_maximum_contiguous_chain(sequence1, sequence2, max_shift):
     if len(sequence1) != len(sequence2):
         print("Error: Sequences must be of the same length.")
         return None, 0
 
-    max_contiguous_chain = 0
+    max_chain = 0
     best_shift = 0
 
     for shift in range(1, max_shift + 1):
-        shifted_sequence1 = sequence1[-shift:] + sequence1[:-shift]
-        chain_length = calculate_max_contiguous_chain(shifted_sequence1, sequence2)
+        chain_length = calculate_max_contiguous_chain_for_shift(sequence1, sequence2, shift)
 
-        if chain_length is not None and chain_length > max_contiguous_chain:
-            max_contiguous_chain = chain_length
+        if chain_length > max_chain:
+            max_chain = chain_length
             best_shift = shift
 
-    return max_contiguous_chain, best_shift
-
-# Function to find the maximum score and the longest contiguous chain among all shifts
-def find_maximum_score_and_chain(sequence1, sequence2, max_shift):
-    if len(sequence1) != len(sequence2):
-        print("Error: Sequences must be of the same length.")
-        return None, 0, None, 0
-
-    max_score = 0
-    max_contiguous_chain = 0
-    best_shift_match = 0
-    best_shift_chain = 0
-
-    for shift in range(1, max_shift + 1):
-        shifted_sequence1 = sequence1[-shift:] + sequence1[:-shift]
-        match_count = calculate_matches(shifted_sequence1, sequence2)
-        chain_length = calculate_max_contiguous_chain(shifted_sequence1, sequence2)
-
-        if match_count is not None and match_count > max_score:
-            max_score = match_count
-            best_shift_match = shift
-
-        if chain_length is not None and chain_length > max_contiguous_chain:
-            max_contiguous_chain = chain_length
-            best_shift_chain = shift
-
-    return max_score, best_shift_match, max_contiguous_chain, best_shift_chain
+    return max_chain, best_shift
 
 # Main menu for user interaction
 def main_menu():
     while True:
         print("\nMain Menu:")
-        print("1. Calculate Number of Matches with Maximum Shift (Console Input)")
-        print("2. Calculate Maximum Contiguous Chain with Maximum Shift (Console Input)")
-        print("3. Calculate Maximum Score and Longest Chain (Console Input)")
-        print("4. Calculate Number of Matches with Maximum Shift (File Input)")
-        print("5. Calculate Maximum Contiguous Chain with Maximum Shift (File Input)")
-        print("6. Calculate Maximum Score and Longest Chain (File Input)")
+        print("1. Calculate Number of Matches without Shifts (Console Input)")
+        print("2. Calculate Best Number of Matches with Shifts (Console Input)")
+        print("3. Calculate Maximum Contiguous Chain (Console Input)")
+        print("4. Calculate Number of Matches without Shifts (File Input)")
+        print("5. Calculate Best Number of Matches with Shifts (File Input)")
+        print("6. Calculate Maximum Contiguous Chain (File Input)")
         print("7. Exit")
         choice = input("Enter your choice: ")
 
@@ -126,9 +110,8 @@ def main_menu():
             if len(sequence1) != len(sequence2):
                 print("Error: Sequences must be of the same length.")
             else:
-                max_shift = set_max_shift()
-                max_match_count, best_shift = calculate_matches_with_shifts(sequence1, sequence2, max_shift)
-                print(f"Number of Matches with Maximum Shift ({best_shift}): {max_match_count}")
+                match_count = calculate_matches(sequence1, sequence2)
+                print(f"Number of Matches without Shifts: {match_count}")
         elif choice == '2':
             sequence1 = input("Enter the first DNA sequence: ").upper()
             sequence2 = input("Enter the second DNA sequence: ").upper()
@@ -136,8 +119,8 @@ def main_menu():
                 print("Error: Sequences must be of the same length.")
             else:
                 max_shift = set_max_shift()
-                max_contiguous_chain, best_shift = calculate_max_contiguous_chain_with_shifts(sequence1, sequence2, max_shift)
-                print(f"Maximum Contiguous Chain with Maximum Shift ({best_shift}): {max_contiguous_chain}")
+                best_match_count, best_shift = calculate_best_matches_with_shifts(sequence1, sequence2, max_shift)
+                print(f"Best Number of Matches with Shifts ({best_shift}): {best_match_count}")
         elif choice == '3':
             sequence1 = input("Enter the first DNA sequence: ").upper()
             sequence2 = input("Enter the second DNA sequence: ").upper()
@@ -145,9 +128,8 @@ def main_menu():
                 print("Error: Sequences must be of the same length.")
             else:
                 max_shift = set_max_shift()
-                max_score, best_shift_match, max_chain, best_shift_chain = find_maximum_score_and_chain(sequence1, sequence2, max_shift)
-                print(f"Maximum Score with Maximum Shift ({best_shift_match}): {max_score}")
-                print(f"Maximum Contiguous Chain with Maximum Shift ({best_shift_chain}): {max_chain}")
+                max_chain, best_shift = calculate_maximum_contiguous_chain(sequence1, sequence2, max_shift)
+                print(f"Maximum Contiguous Chain ({best_shift}): {max_chain}")
         elif choice == '4':
             filename = input("Enter the filename: ")
             sequences = read_sequences_from_file(filename)
@@ -155,9 +137,8 @@ def main_menu():
                 if len(sequences[0]) != len(sequences[1]):
                     print("Error: Sequences in the file must be of the same length.")
                 else:
-                    max_shift = set_max_shift()
-                    max_match_count, best_shift = calculate_matches_with_shifts(sequences[0], sequences[1], max_shift)
-                    print(f"Number of Matches with Maximum Shift ({best_shift}): {max_match_count}")
+                    match_count = calculate_matches(sequences[0], sequences[1])
+                    print(f"Number of Matches without Shifts: {match_count}")
             else:
                 print("File must contain at least two sequences.")
         elif choice == '5':
@@ -168,8 +149,8 @@ def main_menu():
                     print("Error: Sequences in the file must be of the same length.")
                 else:
                     max_shift = set_max_shift()
-                    max_contiguous_chain, best_shift = calculate_max_contiguous_chain_with_shifts(sequences[0], sequences[1], max_shift)
-                    print(f"Maximum Contiguous Chain with Maximum Shift ({best_shift}): {max_contiguous_chain}")
+                    best_match_count, best_shift = calculate_best_matches_with_shifts(sequences[0], sequences[1], max_shift)
+                    print(f"Best Number of Matches with Shifts ({best_shift}): {best_match_count}")
             else:
                 print("File must contain at least two sequences.")
         elif choice == '6':
@@ -180,9 +161,8 @@ def main_menu():
                     print("Error: Sequences in the file must be of the same length.")
                 else:
                     max_shift = set_max_shift()
-                    max_score, best_shift_match, max_chain, best_shift_chain = find_maximum_score_and_chain(sequences[0], sequences[1], max_shift)
-                    print(f"Maximum Score with Maximum Shift ({best_shift_match}): {max_score}")
-                    print(f"Maximum Contiguous Chain with Maximum Shift ({best_shift_chain}): {max_chain}")
+                    max_chain, best_shift = calculate_maximum_contiguous_chain(sequences[0], sequences[1], max_shift)
+                    print(f"Maximum Contiguous Chain ({best_shift}): {max_chain}")
             else:
                 print("File must contain at least two sequences.")
         elif choice == '7':
